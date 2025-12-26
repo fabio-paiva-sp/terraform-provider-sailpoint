@@ -1,18 +1,52 @@
-# Terraform Provider Scaffolding (Terraform Plugin Framework)
+# SailPoint Terraform Provider
 
-_This template repository is built on the [Terraform Plugin Framework](https://github.com/hashicorp/terraform-plugin-framework). The template repository built on the [Terraform Plugin SDK](https://github.com/hashicorp/terraform-plugin-sdk) can be found at [terraform-provider-scaffolding](https://github.com/hashicorp/terraform-provider-scaffolding). See [Which SDK Should I Use?](https://developer.hashicorp.com/terraform/plugin/framework-benefits) in the Terraform documentation for additional information._
+## Roadmap
 
-This repository is a *template* for a [Terraform](https://www.terraform.io) provider. It is intended as a starting point for creating Terraform providers, containing:
+### High priority resources 
 
-- A resource and a data source (`internal/provider/`),
-- Examples (`examples/`) and generated documentation (`docs/`),
-- Miscellaneous meta files.
+- [ ] Managed Clusters - https://developer.sailpoint.com/docs/api/v2025/managed-clusters
+- [ ] Sources - https://developer.sailpoint.com/docs/api/v2025/sources
+- [ ] Managed Clients - https://developer.sailpoint.com/docs/api/v2025/managed-clients
+- [ ] Identity Profiles - https://developer.sailpoint.com/docs/api/v2025/identity-profiles
+- [ ] Access Profiles - https://developer.sailpoint.com/docs/api/v2025/access-profiles
+- [ ] Roles - https://developer.sailpoint.com/docs/api/v2025/roles
+- [ ] Accounts (Delimited file) - https://developer.sailpoint.com/docs/api/v2025/accounts
+- [ ] Transforms - https://developer.sailpoint.com/docs/api/v2025/transforms
+- [ ] Workflows - https://developer.sailpoint.com/docs/api/v2025/workflows
+- [ ] Custom Forms - https://developer.sailpoint.com/docs/api/v2025/custom-forms
+- [ ] Launchers - https://developer.sailpoint.com/docs/api/v2025/get-launchers
 
-These files contain boilerplate code that you will need to edit to create your own Terraform provider. Tutorials for creating Terraform providers can be found on the [HashiCorp Developer](https://developer.hashicorp.com/terraform/tutorials/providers-plugin-framework) platform. _Terraform Plugin Framework specific guides are titled accordingly._
+#### Data lookup
 
-Please see the [GitHub template repository documentation](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template) for how to create a new repository from this template on GitHub.
+- [ ] Identities https://developer.sailpoint.com/docs/api/v2025/identities
+- [ ] Accounts (Delimited file) - https://developer.sailpoint.com/docs/api/v2025/accounts
+- [ ] Entitlements - https://developer.sailpoint.com/docs/api/v2025/entitlements
+- [ ] Access Profiles - https://developer.sailpoint.com/docs/api/v2025/access-profiles
+- [ ] Roles - https://developer.sailpoint.com/docs/api/v2025/roles
+- [ ] Connectors - https://developer.sailpoint.com/docs/api/v2025/connectors
 
-Once you've written your provider, you'll want to [publish it on the Terraform Registry](https://developer.hashicorp.com/terraform/registry/providers/publishing) so that others can use it.
+### Beta resources
+
+- [ ] Applications - https://developer.sailpoint.com/docs/api/beta/apps
+
+### Experimental resources
+
+- [ ] Governance Groups - https://developer.sailpoint.com/docs/api/v2025/governance-groups
+- [ ] Triggers - https://developer.sailpoint.com/docs/api/v2025/triggers
+- [ ] Custom User Levels - https://developer.sailpoint.com/docs/api/v2025/custom-user-levels
+
+### Medium priority resources
+
+- [ ] Connector Rule Management - https://developer.sailpoint.com/docs/api/v2025/connector-rule-management
+- [ ] Certification Campaign Filters - https://developer.sailpoint.com/docs/api/v2025/certification-campaign-filters
+- [ ] Access Request segment - https://developer.sailpoint.com/docs/api/v2025/segments
+- [ ] Service Desk Integrations - https://developer.sailpoint.com/docs/api/v2025/service-desk-integration
+- [ ] Custom Connectors - https://developer.sailpoint.com/docs/api/v2025/connectors
+- [ ] Connector Customizers - https://developer.sailpoint.com/docs/api/v2025/connector-customizers
+
+### Low priority resources
+
+- [ ] Branding - https://developer.sailpoint.com/docs/api/v2025/branding
 
 ## Requirements
 
