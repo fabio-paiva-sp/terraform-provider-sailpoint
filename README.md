@@ -18,6 +18,7 @@
 
 #### Data lookup
 
+- [ ] Managed Clusters - https://developer.sailpoint.com/docs/api/v2025/managed-clusters
 - [ ] Identities https://developer.sailpoint.com/docs/api/v2025/identities
 - [ ] Accounts (Delimited file) - https://developer.sailpoint.com/docs/api/v2025/accounts
 - [ ] Entitlements - https://developer.sailpoint.com/docs/api/v2025/entitlements
