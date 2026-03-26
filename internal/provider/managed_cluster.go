@@ -4,8 +4,16 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
-	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	dataSchema "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	resourceSchema "github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int32planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/mapplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/sailpoint-oss/golang-sdk/v2/api_v2025"
@@ -33,94 +41,242 @@ var (
 	managedClusterEncryptionConfigAttrTypes = map[string]attr.Type{
 		"format": types.StringType,
 	}
-	managedClusterSchemaAttributes = map[string]schema.Attribute{
-		"id": schema.StringAttribute{
+	managedClusterDataSourceSchemaAttributes = map[string]dataSchema.Attribute{
+		"id": dataSchema.StringAttribute{
 			Required: true,
 		},
-		"name": schema.StringAttribute{
+		"name": dataSchema.StringAttribute{
 			Computed: true,
 		},
-		"pod": schema.StringAttribute{
+		"pod": dataSchema.StringAttribute{
 			Computed: true,
 		},
-		"org": schema.StringAttribute{
+		"org": dataSchema.StringAttribute{
 			Computed: true,
 		},
-		"type": schema.StringAttribute{
+		"type": dataSchema.StringAttribute{
 			Computed: true,
 		},
-		"configuration": schema.MapAttribute{
+		"configuration": dataSchema.MapAttribute{
 			Computed:    true,
 			ElementType: types.StringType,
 		},
-		"key_pair": schema.ObjectAttribute{
+		"key_pair": dataSchema.ObjectAttribute{
 			Optional:       true,
 			Computed:       false,
 			AttributeTypes: managedClusterKeyPairAttrTypes,
 		},
-		"attributes": schema.ObjectAttribute{
+		"attributes": dataSchema.ObjectAttribute{
 			Computed:       true,
 			AttributeTypes: managedClusterAttributesAttrTypes,
 		},
-		"redis": schema.ObjectAttribute{
+		"redis": dataSchema.ObjectAttribute{
 			Computed:       true,
 			AttributeTypes: managedClusterRedisAttrTypes,
 		},
-		"description": schema.StringAttribute{
+		"description": dataSchema.StringAttribute{
 			Computed: true,
 		},
-		"client_type": schema.StringAttribute{
+		"client_type": dataSchema.StringAttribute{
 			Computed: true,
 		},
-		"ccg_version": schema.StringAttribute{
+		"ccg_version": dataSchema.StringAttribute{
 			Computed: true,
 		},
-		"pinned_config": schema.BoolAttribute{
+		"pinned_config": dataSchema.BoolAttribute{
 			Computed: true,
 		},
-		"operational": schema.BoolAttribute{
+		"operational": dataSchema.BoolAttribute{
 			Computed: true,
 		},
-		"status": schema.StringAttribute{
+		"status": dataSchema.StringAttribute{
 			Computed: true,
 		},
-		"public_key_certificate": schema.StringAttribute{
+		"public_key_certificate": dataSchema.StringAttribute{
 			Computed: true,
 		},
-		"public_key_thumbprint": schema.StringAttribute{
+		"public_key_thumbprint": dataSchema.StringAttribute{
 			Computed: true,
 		},
-		"public_key": schema.StringAttribute{
+		"public_key": dataSchema.StringAttribute{
 			Computed: true,
 		},
-		"alert_key": schema.StringAttribute{
+		"alert_key": dataSchema.StringAttribute{
 			Computed: true,
 		},
-		"client_ids": schema.ListAttribute{
+		"client_ids": dataSchema.ListAttribute{
 			Computed:    true,
 			ElementType: types.StringType,
 		},
-		"service_count": schema.Int32Attribute{
+		"service_count": dataSchema.Int32Attribute{
 			Computed: true,
 		},
-		"cc_id": schema.StringAttribute{
+		"cc_id": dataSchema.StringAttribute{
 			Computed: true,
 		},
-		"created_at": schema.StringAttribute{
+		"created_at": dataSchema.StringAttribute{
 			Computed: true,
 		},
-		"updated_at": schema.StringAttribute{
-			Computed: true,
-			Optional: true,
-		},
-		"encryption_configuration": schema.ObjectAttribute{
+		"encryption_configuration": dataSchema.ObjectAttribute{
 			Computed:       true,
 			AttributeTypes: managedClusterEncryptionConfigAttrTypes,
 		},
 	}
+	managedClusterResourceSchemaAttributes = map[string]resourceSchema.Attribute{
+		"id": resourceSchema.StringAttribute{
+			Computed: true,
+			PlanModifiers: []planmodifier.String{
+				stringplanmodifier.UseStateForUnknown(),
+			},
+		},
+		"name": resourceSchema.StringAttribute{
+			Required: true,
+		},
+		"description": resourceSchema.StringAttribute{
+			Optional: true,
+			Computed: true, // API converts null to empty string
+			PlanModifiers: []planmodifier.String{
+				stringplanmodifier.UseStateForUnknown(),
+			},
+		},
+		"type": resourceSchema.StringAttribute{
+			Optional: true,
+			PlanModifiers: []planmodifier.String{
+				stringplanmodifier.RequiresReplace(),
+			},
+		},
+		// configuration is supposed to be dynamic but the SailPoint Go SDK maps it to string:string
+		"configuration": resourceSchema.MapAttribute{
+			Optional:    true,
+			Computed:    true,
+			ElementType: types.StringType,
+			PlanModifiers: []planmodifier.Map{
+				mapplanmodifier.UseStateForUnknown(),
+			},
+		},
+		"pod": resourceSchema.StringAttribute{
+			Computed: true,
+			PlanModifiers: []planmodifier.String{
+				stringplanmodifier.UseStateForUnknown(),
+			},
+		},
+		"org": resourceSchema.StringAttribute{
+			Computed: true,
+			PlanModifiers: []planmodifier.String{
+				stringplanmodifier.UseStateForUnknown(),
+			},
+		},
+		"key_pair": resourceSchema.ObjectAttribute{
+			Computed:       true,
+			AttributeTypes: managedClusterKeyPairAttrTypes,
+			PlanModifiers: []planmodifier.Object{
+				objectplanmodifier.UseStateForUnknown(),
+			},
+		},
+		"attributes": resourceSchema.ObjectAttribute{
+			Computed:       true,
+			AttributeTypes: managedClusterAttributesAttrTypes,
+			PlanModifiers: []planmodifier.Object{
+				objectplanmodifier.UseStateForUnknown(),
+			},
+		},
+		"redis": resourceSchema.ObjectAttribute{
+			Computed:       true,
+			AttributeTypes: managedClusterRedisAttrTypes,
+			PlanModifiers: []planmodifier.Object{
+				objectplanmodifier.UseStateForUnknown(),
+			},
+		},
+		"client_type": resourceSchema.StringAttribute{
+			Computed: true,
+			PlanModifiers: []planmodifier.String{
+				stringplanmodifier.UseStateForUnknown(),
+			},
+		},
+		"ccg_version": resourceSchema.StringAttribute{
+			Computed: true,
+			PlanModifiers: []planmodifier.String{
+				stringplanmodifier.UseStateForUnknown(),
+			},
+		},
+		"pinned_config": resourceSchema.BoolAttribute{
+			Computed: true,
+			PlanModifiers: []planmodifier.Bool{
+				boolplanmodifier.UseStateForUnknown(),
+			},
+		},
+		"operational": resourceSchema.BoolAttribute{
+			Computed: true,
+			PlanModifiers: []planmodifier.Bool{
+				boolplanmodifier.UseStateForUnknown(),
+			},
+		},
+		"status": resourceSchema.StringAttribute{
+			Computed: true,
+			PlanModifiers: []planmodifier.String{
+				stringplanmodifier.UseStateForUnknown(),
+			},
+		},
+		"public_key_certificate": resourceSchema.StringAttribute{
+			Computed: true,
+			PlanModifiers: []planmodifier.String{
+				stringplanmodifier.UseStateForUnknown(),
+			},
+		},
+		"public_key_thumbprint": resourceSchema.StringAttribute{
+			Computed: true,
+			PlanModifiers: []planmodifier.String{
+				stringplanmodifier.UseStateForUnknown(),
+			},
+		},
+		"public_key": resourceSchema.StringAttribute{
+			Computed: true,
+			PlanModifiers: []planmodifier.String{
+				stringplanmodifier.UseStateForUnknown(),
+			},
+		},
+		"alert_key": resourceSchema.StringAttribute{
+			Computed: true,
+			PlanModifiers: []planmodifier.String{
+				stringplanmodifier.UseStateForUnknown(),
+			},
+		},
+		"client_ids": resourceSchema.ListAttribute{
+			Computed:    true,
+			ElementType: types.StringType,
+			PlanModifiers: []planmodifier.List{
+				listplanmodifier.UseStateForUnknown(),
+			},
+		},
+		"service_count": resourceSchema.Int32Attribute{
+			Computed: true,
+			PlanModifiers: []planmodifier.Int32{
+				int32planmodifier.UseStateForUnknown(),
+			},
+		},
+		"cc_id": resourceSchema.StringAttribute{
+			Computed: true,
+			PlanModifiers: []planmodifier.String{
+				stringplanmodifier.UseStateForUnknown(),
+			},
+		},
+		"created_at": resourceSchema.StringAttribute{
+			Computed: true,
+			PlanModifiers: []planmodifier.String{
+				stringplanmodifier.UseStateForUnknown(),
+			},
+		},
+		"encryption_configuration": resourceSchema.ObjectAttribute{
+			Computed:       true,
+			AttributeTypes: managedClusterEncryptionConfigAttrTypes,
+			PlanModifiers: []planmodifier.Object{
+				objectplanmodifier.UseStateForUnknown(),
+			},
+		},
+	}
 )
 
-type managedClusterDataSourceModel struct {
+type managedClusterSourceModel struct {
 	ID                      types.String `tfsdk:"id"`
 	Name                    types.String `tfsdk:"name"`
 	Pod                     types.String `tfsdk:"pod"`
@@ -144,13 +300,12 @@ type managedClusterDataSourceModel struct {
 	ServiceCount            types.Int32  `tfsdk:"service_count"`
 	CcID                    types.String `tfsdk:"cc_id"`
 	CreatedAt               types.String `tfsdk:"created_at"`
-	UpdatedAt               types.String `tfsdk:"updated_at"`
 	EncryptionConfiguration types.Object `tfsdk:"encryption_configuration"`
 }
 
 type managedClustersDataSourceModel struct {
-	ManagedClusters []managedClusterDataSourceModel `tfsdk:"managed_clusters"`
-	Filters         types.String                    `tfsdk:"filters"`
+	ManagedClusters []managedClusterSourceModel `tfsdk:"managed_clusters"`
+	Filters         types.String                `tfsdk:"filters"`
 }
 
 type managedClusterEncyprionConfigurationModel struct {
@@ -178,16 +333,16 @@ type managedClusterRedisModel struct {
 	RedisPort types.Int32  `tfsdk:"redis_port"`
 }
 
-func parseManagedClusterData(ctx context.Context, cluster api_v2025.ManagedCluster) (managedClusterDataSourceModel, diag.Diagnostics) {
+func serializeManagedClusterData(ctx context.Context, cluster api_v2025.ManagedCluster) (managedClusterSourceModel, diag.Diagnostics) {
 
 	configuration, diags := types.MapValueFrom(ctx, types.StringType, cluster.Configuration)
 	if diags != nil {
-		return managedClusterDataSourceModel{}, diags
+		return managedClusterSourceModel{}, diags
 	}
 
 	clientIds, diags := types.ListValueFrom(ctx, types.StringType, cluster.ClientIds)
 	if diags != nil {
-		return managedClusterDataSourceModel{}, diags
+		return managedClusterSourceModel{}, diags
 	}
 
 	tflog.Trace(ctx, "Reading cluster configuration property", map[string]any{"configuration": cluster.Configuration})
@@ -200,14 +355,6 @@ func parseManagedClusterData(ctx context.Context, cluster api_v2025.ManagedClust
 		tflog.Trace(ctx, "Reading cluster created at property string", map[string]any{"date": createdAtDate.String()})
 	}
 
-	var updatedAt string
-	updatedAtDate, _ := cluster.GetUpdatedAtOk()
-
-	if updatedAtDate != nil {
-		updatedAt = updatedAtDate.String()
-		tflog.Trace(ctx, "Reading cluster updated at property string", map[string]any{"date": updatedAtDate.String()})
-	}
-
 	keyPairData := managedClusterKeyPairModel{
 		PublicKey:            types.StringPointerValue(extractNullableString(cluster.KeyPair.GetPublicKeyOk())),
 		PublicKeyThumbprint:  types.StringPointerValue(extractNullableString(cluster.KeyPair.GetPublicKeyThumbprintOk())),
@@ -216,7 +363,7 @@ func parseManagedClusterData(ctx context.Context, cluster api_v2025.ManagedClust
 
 	keyPairObject, diags := types.ObjectValueFrom(ctx, managedClusterKeyPairAttrTypes, keyPairData)
 	if diags != nil {
-		return managedClusterDataSourceModel{}, diags
+		return managedClusterSourceModel{}, diags
 	}
 
 	attributesData := managedClusterAttributesModel{
@@ -229,7 +376,7 @@ func parseManagedClusterData(ctx context.Context, cluster api_v2025.ManagedClust
 
 	attributesObject, diags := types.ObjectValueFrom(ctx, managedClusterAttributesAttrTypes, attributesData)
 	if diags != nil {
-		return managedClusterDataSourceModel{}, diags
+		return managedClusterSourceModel{}, diags
 	}
 
 	redisData := managedClusterRedisModel{
@@ -239,7 +386,7 @@ func parseManagedClusterData(ctx context.Context, cluster api_v2025.ManagedClust
 
 	redisObject, diags := types.ObjectValueFrom(ctx, managedClusterRedisAttrTypes, redisData)
 	if diags != nil {
-		return managedClusterDataSourceModel{}, diags
+		return managedClusterSourceModel{}, diags
 	}
 
 	encryptionConfigData := managedClusterEncyprionConfigurationModel{
@@ -248,10 +395,10 @@ func parseManagedClusterData(ctx context.Context, cluster api_v2025.ManagedClust
 
 	encryptionConfigObject, diags := types.ObjectValueFrom(ctx, managedClusterEncryptionConfigAttrTypes, encryptionConfigData)
 	if diags != nil {
-		return managedClusterDataSourceModel{}, diags
+		return managedClusterSourceModel{}, diags
 	}
 
-	obj := managedClusterDataSourceModel{
+	obj := managedClusterSourceModel{
 		ID:                      types.StringValue(cluster.GetId()),
 		Name:                    types.StringValue(cluster.GetName()),
 		Pod:                     types.StringValue(cluster.GetPod()),
@@ -271,7 +418,6 @@ func parseManagedClusterData(ctx context.Context, cluster api_v2025.ManagedClust
 		ServiceCount:            types.Int32Value(cluster.GetServiceCount()),
 		CcID:                    types.StringValue(cluster.GetCcId()),
 		CreatedAt:               types.StringPointerValue(&createdAt),
-		UpdatedAt:               types.StringPointerValue(&updatedAt),
 		Configuration:           configuration,
 		KeyPair:                 keyPairObject,
 		Attributes:              attributesObject,

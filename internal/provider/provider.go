@@ -203,6 +203,7 @@ func (p *sailpointProvider) Configure(ctx context.Context, req provider.Configur
 		configuration.Experimental = true
 		tflog.Debug(ctx, "Allowing the client to use experimental resources")
 	}
+	configuration.Debug = true
 	client := sailpoint.NewAPIClient(configuration)
 
 	// Make the SailPoint client available during DataSource and Resource
@@ -221,5 +222,7 @@ func (p *sailpointProvider) DataSources(_ context.Context) []func() datasource.D
 
 // Resources defines the resources implemented in the provider.
 func (p *sailpointProvider) Resources(_ context.Context) []func() resource.Resource {
-	return nil
+	return []func() resource.Resource{
+		NewManagedClusterResource,
+	}
 }

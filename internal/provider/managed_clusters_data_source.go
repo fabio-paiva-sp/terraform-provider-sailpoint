@@ -39,7 +39,7 @@ func (d *managedClustersDataSource) Schema(_ context.Context, _ datasource.Schem
 			"managed_clusters": schema.ListNestedAttribute{
 				Computed: true,
 				NestedObject: schema.NestedAttributeObject{
-					Attributes: managedClusterSchemaAttributes,
+					Attributes: managedClusterDataSourceSchemaAttributes,
 				},
 			},
 		},
@@ -97,11 +97,11 @@ func (d *managedClustersDataSource) Read(ctx context.Context, req datasource.Rea
 		return
 	}
 
-	state.ManagedClusters = make([]managedClusterDataSourceModel, 0)
+	state.ManagedClusters = make([]managedClusterSourceModel, 0)
 	for _, cluster := range results {
 		tflog.Debug(ctx, "Iterating through the clusters")
 
-		clusterState, diags := parseManagedClusterData(ctx, cluster)
+		clusterState, diags := serializeManagedClusterData(ctx, cluster)
 		resp.Diagnostics.Append(diags...)
 		if resp.Diagnostics.HasError() {
 			return
