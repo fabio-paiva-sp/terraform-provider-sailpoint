@@ -7,7 +7,7 @@ require (
 	github.com/hashicorp/terraform-plugin-go v0.29.0
 	github.com/hashicorp/terraform-plugin-log v0.10.0
 	github.com/hashicorp/terraform-plugin-testing v1.14.0
-	github.com/sailpoint-oss/golang-sdk/v2 v2.7.35
+	github.com/sailpoint-oss/golang-sdk/v2 v2.7.53
 )
 
 require (
