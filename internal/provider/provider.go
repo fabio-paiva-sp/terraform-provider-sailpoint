@@ -57,15 +57,15 @@ func (p *sailpointProvider) Schema(_ context.Context, _ provider.SchemaRequest, 
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"base_url": schema.StringAttribute{
-				Required:    true,
+				Optional:    true,
 				Description: "The API URL - The API URL used to access your Identity Security Cloud tenant (ex. https://tenant.api.identitynow.com), this is used for the api calls made by certain commands.",
 			},
 			"client_id": schema.StringAttribute{
-				Required:    true,
+				Optional:    true,
 				Description: "The PAT Client ID https://developer.sailpoint.com/docs/api/authentication/#generate-a-personal-access-token",
 			},
 			"client_secret": schema.StringAttribute{
-				Required:    true,
+				Optional:    true,
 				Sensitive:   true,
 				Description: "The PAT Client Secret https://developer.sailpoint.com/docs/api/authentication/#generate-a-personal-access-token",
 			},
@@ -131,6 +131,8 @@ func (p *sailpointProvider) Configure(ctx context.Context, req provider.Configur
 	clientID := os.Getenv("SAIL_CLIENT_ID")
 	clientSecret := os.Getenv("SAIL_CLIENT_SECRET")
 	experimental := os.Getenv("SAIL_EXPERIMENTAL") == "true"
+
+	tflog.Debug(ctx, fmt.Sprintf("baseurl from env: %s", baseUrl))
 
 	if !config.BaseUrl.IsNull() {
 		baseUrl = config.BaseUrl.ValueString()
