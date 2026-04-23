@@ -1,13 +1,3 @@
-terraform {
-  required_providers {
-    sailpoint = {
-      source = "hashicorp.com/sailpoint/sailpoint"
-    }
-  }
-}
-
-provider "sailpoint" {}
-
 resource "sailpoint_managed_cluster" "mycluster" {
   name        = "Testing cluster v1.2"
   type        = "standard"
