@@ -19,34 +19,34 @@ import (
 
 // Ensure the implementation satisfies the expected interfaces.
 var (
-	_ resource.Resource                = &mangedClusterResource{}
-	_ resource.ResourceWithConfigure   = &mangedClusterResource{}
-	_ resource.ResourceWithImportState = &mangedClusterResource{}
+	_ resource.Resource                = &managedClusterResource{}
+	_ resource.ResourceWithConfigure   = &managedClusterResource{}
+	_ resource.ResourceWithImportState = &managedClusterResource{}
 )
 
 // NewManagedClusterResource is a helper function to simplify the provider implementation.
 func NewManagedClusterResource() resource.Resource {
-	return &mangedClusterResource{}
+	return &managedClusterResource{}
 }
 
-// mangedClusterResource is the resource implementation.
-type mangedClusterResource struct {
+// managedClusterResource is the resource implementation.
+type managedClusterResource struct {
 	client *sailpoint.APIClient
 }
 
 // Metadata returns the resource type name.
-func (r *mangedClusterResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+func (r *managedClusterResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_managed_cluster"
 }
 
 // Schema defines the schema for the resource.
-func (r *mangedClusterResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *managedClusterResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: managedClusterResourceSchemaAttributes,
 	}
 }
 
-func (r *mangedClusterResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *managedClusterResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	// Add a nil check when handling ProviderData because Terraform
 	// sets that data after it calls the ConfigureProvider RPC.
 	if req.ProviderData == nil {
@@ -69,7 +69,7 @@ func (r *mangedClusterResource) Configure(ctx context.Context, req resource.Conf
 }
 
 // Create creates the resource and sets the initial Terraform state.
-func (r *mangedClusterResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+func (r *managedClusterResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "creating managed cluster resource")
 
 	// Retrieve values from plan
@@ -188,7 +188,7 @@ func (r *mangedClusterResource) Create(ctx context.Context, req resource.CreateR
 }
 
 // Read refreshes the Terraform state with the latest data.
-func (r *mangedClusterResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+func (r *managedClusterResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "reading managed cluster resource")
 	// Get current state
 	var state managedClusterSourceModel
@@ -281,7 +281,7 @@ func buildConfigurationPatchOps(ctx context.Context, newConfig map[string]attr.V
 }
 
 // Update updates the resource and sets the updated Terraform state on success.
-func (r *mangedClusterResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+func (r *managedClusterResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "updating managed cluster resource")
 
 	var (
@@ -402,7 +402,7 @@ func (r *mangedClusterResource) Update(ctx context.Context, req resource.UpdateR
 }
 
 // Delete deletes the resource and removes the Terraform state on success.
-func (r *mangedClusterResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+func (r *managedClusterResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "deleting managed cluster resource")
 
 	var state managedClusterSourceModel
@@ -432,7 +432,7 @@ func (r *mangedClusterResource) Delete(ctx context.Context, req resource.DeleteR
 	tflog.Info(ctx, "finish deleting managed cluster resource")
 }
 
-func (r *mangedClusterResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+func (r *managedClusterResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	// Retrieve import ID and save to id attribute
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
