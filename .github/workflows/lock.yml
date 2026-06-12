@@ -2,9 +2,9 @@
 # https://github.com/hashicorp/terraform-devex-repos
 name: 'Lock Threads'
 
-on:
-  schedule:
-    - cron: '43 20 * * *'
+# on:
+#   schedule:
+#     - cron: '43 20 * * *'
 
 jobs:
   lock:
